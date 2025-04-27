@@ -49,7 +49,17 @@ Book Explorer, kullanıcıların popüler kitapları keşfetmesini, favorilerine
 ### <u>Coil</u>
 - Görsel yükleme
 
+
 ---
 
 ## Lisans
 Bu proje eğitim ve portföy amacıyla geliştirilmiştir.
+
+## Kurulum 🔧
+
+Projeyi klonladıktan sonra, proje kök dizininde bir `local.properties` dosyası oluşturarak aşağıdaki bilgileri eklemeniz gerekmektedir:
+
+```properties
+API_KEY=your_api_key_here
+BASE_URL=your_base_url_here
+GOOGLE_CLIENT_ID=your_google_client_id_here
