@@ -217,6 +217,7 @@ fun BookItemView(book: BookItem, navController: NavController) {
             .clickable {
                 val id = book.id
                 navController.navigate("details_screen/$id")
+
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {

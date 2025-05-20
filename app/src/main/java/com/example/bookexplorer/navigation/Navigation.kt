@@ -45,7 +45,7 @@ fun AppNavigation(
         }
 
         composable("favourites_screen") {
-            FavouritesScreen(navController = navController)
+            FavouritesScreen(navController = navController, themePreference = themePreference)
         }
 
         composable("details_screen/{bookId}") { backStackEntry ->

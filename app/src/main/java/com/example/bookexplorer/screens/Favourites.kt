@@ -31,23 +31,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookexplorer.R
 import com.example.bookexplorer.model.BookDetails
 import com.example.bookexplorer.navigation.BottomNavigationBar
+import com.example.bookexplorer.ui.theme.ThemePreference
 import com.example.bookexplorer.util.toHttps
 import com.example.bookexplorer.viewmodel.BookViewModel
 
 @Composable
 fun FavouritesScreen(
     viewModel: BookViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    themePreference: ThemePreference
 ) {
     val favoriteBooks by viewModel.favoriteBooks.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -99,7 +103,8 @@ fun FavouritesScreen(
                                     viewModel.removeFromFavorites(bookId) {
                                         Toast.makeText(context, "Favorilerden çıkarıldı", Toast.LENGTH_SHORT).show()
                                     }
-                                }
+                                },
+                                themePreference = themePreference
                             )
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         }
@@ -115,23 +120,41 @@ fun FavouritesScreen(
 fun BookItem(
     book: BookDetails,
     navController: NavController,
-    onRemoveClick: (String) -> Unit
+    onRemoveClick: (String) -> Unit,
+    themePreference: ThemePreference
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .clickable {
+                val id = book.id
+                navController.navigate("details_screen/$id")
+
+            }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(book.volumeInfo.imageLinks?.thumbnail?.toHttps()),
-            contentDescription = "Kitap Kapağı",
-            modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    navController.navigate("details_screen/${book.id}")
-                }
-        )
+        val isDarkMode = themePreference.isDarkMode.collectAsState(initial = false)
+        val imageUrl = book.volumeInfo.imageLinks?.thumbnail?.toHttps()
+
+        if (imageUrl != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Kitap Kapağı",
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(end = 16.dp),
+                contentScale = ContentScale.Crop,
+                error = painterResource(id = R.drawable.book_cover_default)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = if (isDarkMode.value) R.drawable.book_cover_dark_mode else R.drawable.book_cover_default),
+                contentDescription = "Kapak Bulunamadı",
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(end = 16.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.width(12.dp))
 

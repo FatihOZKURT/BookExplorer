@@ -204,10 +204,15 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navController: NavController) {
         ) {
             Button(
                 onClick = {
+                    if (email.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "E-posta ve şifre boş bırakılamaz", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
                     FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(email, password)
                         .addOnSuccessListener { onLoginSuccess() }
-                        .addOnFailureListener { error = it.localizedMessage }
+                        .addOnFailureListener {  Toast.makeText(context,  it.localizedMessage, Toast.LENGTH_LONG).show() }
                 },
                 shape = RectangleShape,
                 modifier = Modifier
@@ -218,6 +223,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navController: NavController) {
             ) {
                 Text("Giriş Yap", fontSize = 20.sp)
             }
+
 
             Text("veya", fontSize = 15.sp, color = colorScheme.onBackground.copy(alpha = 0.6f))
 
