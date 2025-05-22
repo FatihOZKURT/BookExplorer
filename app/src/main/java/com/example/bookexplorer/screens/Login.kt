@@ -1,6 +1,5 @@
 package com.example.bookexplorer.screens
 
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -51,6 +50,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bookexplorer.R
 import com.example.bookexplorer.util.Constants.GOOGLE_CLIENT_ID
+import com.example.bookexplorer.util.showLongToast
+import com.example.bookexplorer.util.showShortToast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -183,13 +184,13 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navController: NavController) {
                         if (email.isNotBlank()) {
                             FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                                 .addOnSuccessListener {
-                                    Toast.makeText(context, "Şifre sıfırlama e-postası gönderildi", Toast.LENGTH_SHORT).show()
+                                    context.showShortToast("Şifre sıfırlama e-postası gönderildi")
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(context, "Hata: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                    context.showShortToast("Hata: ${it.localizedMessage}")
                                 }
                         } else {
-                            Toast.makeText(context, "Lütfen geçerli bir e-posta girin", Toast.LENGTH_SHORT).show()
+                            context.showShortToast("Lütfen geçerli bir e-posta giriniz")
                         }
                     }
             )
@@ -205,14 +206,15 @@ fun LoginScreen(onLoginSuccess: () -> Unit, navController: NavController) {
             Button(
                 onClick = {
                     if (email.isBlank() || password.isBlank()) {
-                        Toast.makeText(context, "E-posta ve şifre boş bırakılamaz", Toast.LENGTH_SHORT).show()
+                        context.showShortToast("E-posta ve şifre boş bırakılamaz")
                         return@Button
+
                     }
 
                     FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(email, password)
                         .addOnSuccessListener { onLoginSuccess() }
-                        .addOnFailureListener {  Toast.makeText(context,  it.localizedMessage, Toast.LENGTH_LONG).show() }
+                        .addOnFailureListener {  context.showLongToast("Giriş başarısız: ${it.localizedMessage}") }
                 },
                 shape = RectangleShape,
                 modifier = Modifier
